@@ -109,6 +109,84 @@ solve the following leetcode in JavaScript:
 https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/
 
 and paste your solution here. Please comment each line of your code to explain it, and be prepared to explain in the follow up interview.
+*/ 
+const longestSubstring = (s, k) => {
+  // variable to store result
+  let longestSubstringLen = 0;
+  // string length
+  const len = s.length
+  // early termination condition
+  if(len < k) return longestSubstringLen; 
+  // Number of unique characters in string to serve as our pivot
+  const uniqueCharUpperBound = new Set(s).size;
+
+
+  /* 
+  For every number of potential unique characters we can have in a substring (i),
+  we will construct that substring with a sliding window approach, growing and 
+  shrinking the window as necessary
+  */
+  for(let i=1; i <= uniqueCharUpperBound; i++){
+    // hash map of current sliding window 
+    const charMap = new Map();
+    // count of unique characters in current sliding window
+    let uniqueChars = 0;
+    // number of characters with at least k instances in current sliding window
+    let kCharInstances = 0;
+
+    // sliding window pointers 
+    let leftPointer = 0;
+    let rightPointer = 0;
+
+    // ensures our window slides all the way right
+    while(rightPointer < len){
+      // update map and unique chars accordingly 
+      if(charMap.has(s[rightPointer])) {
+        charMap.set(s[rightPointer], charMap.get(s[rightPointer]) + 1);
+      }
+      else { 
+        charMap.set(s[rightPointer], 1);
+        uniqueChars++;
+      }
+    
+      // check if new rightPointer val created new k instance
+      if(charMap.get(s[rightPointer]) === k) {
+        kCharInstances++;
+      }
+
+      // open window on right 
+      rightPointer++;
+
+      // if there are more unique chars than allotted for in this iteration we shrink window from left and update accordingly
+      while(uniqueChars > i){
+        // upating k char instances
+        if(charMap.get(s[leftPointer]) === k) {
+          kCharInstances--;
+        }
+        
+        // updating char map
+        charMap.set(s[leftPointer], charMap.get(s[leftPointer]) - 1);
+
+        // updating char map and unique chars
+        if(charMap.get(s[leftPointer]) === 0){
+          charMap.delete(s[leftPointer])
+          uniqueChars--
+        }
+
+        // shrink window
+        leftPointer++
+      }
+
+      // check if current window is valid 
+      if(uniqueChars === i && uniqueChars === kCharInstances) longestSubstringLen = Math.max(longestSubstringLen, rightPointer - leftPointer)
+    }
+  }
+  
+  // resturn result
+  return longestSubstringLen
+}
+console.log(longestSubstring('aaabb', 3)) // 3
+console.log(longestSubstring('ababbc', 2)) // 5
 
 /* Problem 7 */
 /*Skill: SQL
