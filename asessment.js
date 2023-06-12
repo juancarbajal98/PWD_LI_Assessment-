@@ -12,34 +12,60 @@ API ENDPOINT: https://www.reddit.com/r/react.json
 
 complete the code as per the given instructions:
 */
+import React from 'react';
+import {createRoot} from 'react-dom/client';
 
 
 class APICaller extends React.Component{
-  callApi(){
+  async callApi(){
     //#1 Implement a fetch method with the given API ENDPOINT
-    // YOUR CODE HERE 
+    // Fetch from Reddit API using the Fetch API
+    await fetch('https://www.reddit.com/r/react.json')
     .then((result)=>{
       //#2 Return the result in json format
-      //YOUR CODE HERE 
+      // Check if result is ok
+      if(result.ok){
+        return result.json();
+      }
+      // Throw result if not ok
+      throw result;
     }).then((jsonData)=>{
       //#3 Print/log the jsonData in the console of the browser
-      //YOUR CODE HERE 
+      // Print string version for easier reading 
+      console.log(JSON.stringify(jsonData));
+    })
+    .catch(e => { 
+      // Catch error and log to console
+      console.error(`Error: ${e}`); 
+    })
+    .finally(() => {
+      // Console log once promise is settled
+      console.log('Done Calling Reddit API.'); 
     })
   }
-render(){
-  return <div>
-    <button 
-  //#4 Implement an onCLick functionality to the button such that it calls the callApi() function when it is clicked. 
-  // YOUR CODE HERE 
-    >Call the API now.</button>
-  </div>
+  render(){
+    return <div>
+      <button 
+    //#4 Implement an onCLick functionality to the button such that it calls the callApi() function when it is clicked. 
+        // arrow function to avoid calling the method on initial render
+        onClick={() => {this.callApi()}}
+      >Call the API now.</button>
+    </div>
+  }
 }
-}
-React.render(
+// React.render(
   //#5 Implement the APICaller component appropiately into the render method
   //YOUR CODE HERE 
-  , document.getElementById('myapicaller')
-)
+//   , document.getElementById('myapicaller')
+// )
+
+/* 
+According to React documentation the render method will be replaced with createRoot. 
+For that reason I used createRoot() and createRoot().render() instead of render(). 
+*/
+const container = document.getElementById('myapicaller')
+const root = createRoot(container)
+root.render(<APICaller />)
 
 
 /* Problem 3 */
